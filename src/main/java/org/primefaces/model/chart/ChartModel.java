@@ -19,6 +19,8 @@ import java.io.Serializable;
 
 public class ChartModel implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String title;
     private boolean shadow = true;
     private String seriesColors;
@@ -129,7 +131,7 @@ public class ChartModel implements Serializable {
     public void setLegendEscapeHtml(boolean legendEscapeHtml) {
         this.legendEscapeHtml = legendEscapeHtml;
     }
-    
+
     public String getDataRenderMode() {
         return dataRenderMode;
     }

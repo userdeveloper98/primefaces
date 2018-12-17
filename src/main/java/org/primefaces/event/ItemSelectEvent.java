@@ -20,21 +20,40 @@ import javax.faces.component.behavior.Behavior;
 
 public class ItemSelectEvent extends AbstractAjaxBehaviorEvent {
 
+    private static final long serialVersionUID = 1L;
+
     private int itemIndex;
 
     private int seriesIndex;
 
-    public ItemSelectEvent(UIComponent source, Behavior behavior, int itemIndex, int seriesIndex) {
+    private int dataSetIndex;
+
+    public ItemSelectEvent(UIComponent source, Behavior behavior, int itemIndex, int index) {
         super(source, behavior);
         this.itemIndex = itemIndex;
-        this.seriesIndex = seriesIndex;
+        this.dataSetIndex = index;
+        this.seriesIndex = index;
     }
 
     public int getItemIndex() {
         return itemIndex;
     }
 
+    /**
+     * Gets the index of series on JqPlot
+     *
+     * @return seriesIndex
+     */
     public int getSeriesIndex() {
         return seriesIndex;
+    }
+
+    /**
+     * Gets the index of dataSet on ChartJs
+     *
+     * @return dataSetIndex
+     */
+    public int getDataSetIndex() {
+        return dataSetIndex;
     }
 }

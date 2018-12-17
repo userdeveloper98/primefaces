@@ -35,6 +35,9 @@ PrimeFaces.widget.OverlayPanel = PrimeFaces.widget.DynamicOverlayWidget.extend({
     refresh: function(cfg) {
         this._super(cfg);
 
+        // fix #4307
+        this.loaded = false;
+
         // see #setupDialogSupport
         if (!this.cfg.appendTo) {
             PrimeFaces.utils.removeDynamicOverlay(this, this.jq, this.id, $(document.body));
@@ -126,12 +129,16 @@ PrimeFaces.widget.OverlayPanel = PrimeFaces.widget.DynamicOverlayWidget.extend({
 
         //hide overlay when mousedown is at outside of overlay
         if(this.cfg.dismissable && !this.cfg.modal) {
-            PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id, $this.jq,
+            PrimeFaces.utils.registerHideOverlayHandler(this, 'mousedown.' + this.id + '_hide', $this.jq,
                 function() { return $this.target; },
-                function(e) { $this.hide(); });
+                function(e, eventTarget) {
+                    if(!($this.jq.is(eventTarget) || $this.jq.has(eventTarget).length > 0 || eventTarget.closest('.ui-input-overlay').length > 0)) {
+                        $this.hide();
+                    }
+                });
         }
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id, $this.jq, function() {
+        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', $this.jq, function() {
             $this.align();
         });
     },

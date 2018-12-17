@@ -23,6 +23,8 @@ import org.primefaces.model.diagram.endpoint.EndPoint;
 
 public class DisconnectEvent extends AbstractAjaxBehaviorEvent {
 
+    private static final long serialVersionUID = 1L;
+
     private final Element sourceElement;
     private final Element targetElement;
     private final EndPoint sourceEndPoint;
@@ -30,7 +32,7 @@ public class DisconnectEvent extends AbstractAjaxBehaviorEvent {
 
     public DisconnectEvent(UIComponent component, Behavior behavior, Element sourceElement, Element targetElement, EndPoint sourceEndPoint,
             EndPoint targetEndPoint) {
-        
+
         super(component, behavior);
         this.sourceElement = sourceElement;
         this.targetElement = targetElement;

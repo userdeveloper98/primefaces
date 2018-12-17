@@ -21,14 +21,16 @@ import java.util.List;
 
 public class DefaultTagCloudModel implements TagCloudModel {
 
+    private static final long serialVersionUID = 1L;
+
     private List<TagCloudItem> tags;
 
     public DefaultTagCloudModel() {
-        tags = new ArrayList<TagCloudItem>();
+        tags = new ArrayList<>();
     }
 
     public DefaultTagCloudModel(Collection<TagCloudItem> collection) {
-        tags = new ArrayList<TagCloudItem>(collection);
+        tags = new ArrayList<>(collection);
     }
 
     @Override

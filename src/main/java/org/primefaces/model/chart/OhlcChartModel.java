@@ -20,12 +20,14 @@ import java.util.List;
 
 public class OhlcChartModel extends CartesianChartModel {
 
+    private static final long serialVersionUID = 1L;
+
     private List<OhlcChartSeries> data;
 
     private boolean candleStick;
 
     public OhlcChartModel() {
-        data = new ArrayList<OhlcChartSeries>();
+        data = new ArrayList<>();
     }
 
     public OhlcChartModel(List<OhlcChartSeries> data) {

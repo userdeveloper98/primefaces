@@ -129,13 +129,11 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         }
     },
 
-    /**
-     * @Override
-     */
+    //@override
     refresh: function(cfg) {
         this.columnWidthsFixed = false;
 
-        this.init(cfg);
+        this._super(cfg);
     },
 
     /**
@@ -380,14 +378,14 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
     bindEnterKeyFilter: function(filter) {
         var $this = this;
 
-        filter.bind('keydown', function(e) {
+        filter.on('keydown', function(e) {
             var key = e.which,
             keyCode = $.ui.keyCode;
 
             if((key === keyCode.ENTER)) {
                 e.preventDefault();
             }
-        }).bind('keyup', function(e) {
+        }).on('keyup', function(e) {
             var key = e.which,
             keyCode = $.ui.keyCode;
 
@@ -1002,6 +1000,12 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
                 this.rowHeight = row.outerHeight();
                 this.scrollBody.children('div').css('height', parseFloat((scrollLimit * this.rowHeight + 1) + 'px'));
+                
+                if(hasEmptyMessage && this.cfg.scrollHeight && this.percentageScrollHeight) {
+                    setTimeout(function() {
+                        $this.adjustScrollHeight();
+                    }, 10);
+                }
             }
         }
 
@@ -1010,6 +1014,10 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             $this.scrollHeaderBox.css('margin-left', -scrollLeft);
             $this.scrollFooterBox.css('margin-left', -scrollLeft);
 
+            if($this.isEmpty()) {
+                return;
+            }
+            
             if($this.cfg.virtualScroll) {
                 var virtualScrollBody = this;
 
@@ -1050,7 +1058,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             $this.scrollFooter.scrollLeft(0);
         });
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id, $this.jq, function() {
+        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', $this.jq, function() {
             if ($this.percentageScrollHeight) {
                 $this.adjustScrollHeight();
             }
@@ -1469,6 +1477,10 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
                         widget: $this,
                         handle: function(content) {
                             this.updateData(content);
+
+                            if(this.checkAllToggler) {
+                              this.updateHeaderCheckbox();
+                            }
                         }
                     });
 
@@ -1640,6 +1652,12 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
                         $this.rowHeight = row.outerHeight();
                         $this.scrollBody.children('div').css({'height': parseFloat((scrollLimit * $this.rowHeight + 1) + 'px')});
+                    
+                        if(hasEmptyMessage && $this.cfg.scrollHeight && $this.percentageScrollHeight) {
+                            setTimeout(function() {
+                                $this.adjustScrollHeight();
+                            }, 10);
+                        }
                     }
                 }
                 else if($this.cfg.liveScroll) {
@@ -1658,7 +1676,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.callBehavior('filter', options);
         }
         else {
-            PrimeFaces.ajax.AjaxRequest(options);
+            PrimeFaces.ajax.Request.handle(options);
         }
     },
 
@@ -2061,30 +2079,11 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
 
         //fire toggleSelect event
         if(this.hasBehavior('toggleSelect')) {
-            var $this = this,
-            options = {
-                source: this.id,
-                process: this.id,
-                update: this.id,
-                formId: this.cfg.formId,
-                params: [{name: this.id + '_checked', value: !checked},
-                         {name: this.id + '_encodeFeature', value: true},
-                         {name: this.id + '_skipChildren', value: true}],
-                onsuccess: function(responseXML, status, xhr) {
-                    PrimeFaces.ajax.Response.handle(responseXML, status, xhr, {
-                            widget: $this,
-                            handle: function(content) {
-                                var selection = $(content).val();
-                                $this.selection = (selection === "") ? [] : selection.split(',');
-                                $this.writeSelections();
-                            }
-                        });
-
-                    return true;
-                }
+            var ext = {
+                params: [{name: this.id + '_checked', value: !checked}]
             };
 
-            this.callBehavior('toggleSelect', options);
+            this.callBehavior('toggleSelect', ext);
         }
     },
 
@@ -2206,7 +2205,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.callBehavior('rowToggle', options);
         }
         else {
-            PrimeFaces.ajax.AjaxRequest(options);
+            PrimeFaces.ajax.Request.handle(options);
         }
     },
 
@@ -2800,7 +2799,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             PrimeFaces.ajax.Request.handle(options);
         }
     },
-    
+
     lazyRowEditInit: function(row) {
         var rowIndex = this.getRowMeta(row).index,
         $this = this;
@@ -3574,7 +3573,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
         this.stickyContainerHeight = this.stickyContainer.height();
 
         this.stickyScrollParent = this.jq.scrollParent();
-        if (this.stickyScrollParent.is('body')) {
+        if (this.stickyScrollParent.is('body') || this.stickyScrollParent.is(document)) {
             this.stickyScrollParent = $(window);
         }
 
@@ -3582,7 +3581,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             this.relativeHeight = 0;
         }
 
-        PrimeFaces.utils.registerScrollHandler(this, 'scroll.' + this.id, function() {
+        PrimeFaces.utils.registerScrollHandler(this, 'scroll.' + this.id + '_align', function() {
             var tableOffset = table.offset(),
                 scrollTop = $this.stickyScrollParent.scrollTop();
 
@@ -3641,7 +3640,7 @@ PrimeFaces.widget.DataTable = PrimeFaces.widget.DeferredWidget.extend({
             }
         });
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.sticky-' + this.id, null, function() {
+        PrimeFaces.utils.registerResizeHandler(this, 'resize.sticky-' + this.id + '_align', null, function() {
             $this.stickyContainer.width(table.outerWidth());
         });
 
@@ -4004,7 +4003,7 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
             $this.saveScrollState();
         });
 
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id, $this.jq, function() {
+        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', $this.jq, function() {
             if ($this.percentageScrollHeight) {
                 $this.adjustScrollHeight();
             }
@@ -4065,15 +4064,16 @@ PrimeFaces.widget.FrozenDataTable = PrimeFaces.widget.DataTable.extend({
     },
 
     setScrollWidth: function(width) {
+        this.scrollHeader.width(width);
+        this.scrollBody.css('margin-right', 0).width(width);
+        this.scrollFooter.width(width);
+        
         var $this = this,
         headerWidth = width + this.frozenLayout.width();
 
         this.jq.children('.ui-widget-header').each(function() {
             $this.setOuterWidth($(this), headerWidth);
         });
-        this.scrollHeader.width(width);
-        this.scrollBody.css('margin-right', 0).width(width);
-        this.scrollFooter.width(width);
     },
 
     fixColumnWidths: function() {

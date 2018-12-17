@@ -22,8 +22,10 @@ import java.util.Map;
 
 public class CartesianChartModel extends ChartModel {
 
+    private static final long serialVersionUID = 1L;
+
     protected Map<AxisType, Axis> axes;
-    
+
     private List<ChartSeries> series;
     private boolean zoom = false;
     private boolean animate = false;
@@ -33,12 +35,12 @@ public class CartesianChartModel extends ChartModel {
     private String datatipEditor;
 
     public CartesianChartModel() {
-        series = new ArrayList<ChartSeries>();
+        series = new ArrayList<>();
         createAxes();
     }
 
     protected void createAxes() {
-        axes = new HashMap<AxisType, Axis>();
+        axes = new HashMap<>();
         axes.put(AxisType.X, new LinearAxis());
         axes.put(AxisType.Y, new LinearAxis());
     }

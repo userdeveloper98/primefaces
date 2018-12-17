@@ -21,28 +21,31 @@ import java.util.List;
 
 public class DefaultSubMenu implements Submenu, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String style;
     private String styleClass;
     private String icon;
     private String label;
+    private boolean disabled;
     private List<MenuElement> elements;
     private boolean rendered = true;
     private boolean expanded = false;
 
     public DefaultSubMenu() {
-        elements = new ArrayList<MenuElement>();
+        elements = new ArrayList<>();
     }
 
     public DefaultSubMenu(String label) {
         this.label = label;
-        elements = new ArrayList<MenuElement>();
+        elements = new ArrayList<>();
     }
 
     public DefaultSubMenu(String label, String icon) {
         this.label = label;
         this.icon = icon;
-        elements = new ArrayList<MenuElement>();
+        elements = new ArrayList<>();
     }
 
     @Override
@@ -89,6 +92,15 @@ public class DefaultSubMenu implements Submenu, Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

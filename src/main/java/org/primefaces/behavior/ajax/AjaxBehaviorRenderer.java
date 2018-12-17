@@ -29,7 +29,6 @@ import javax.faces.render.ClientBehaviorRenderer;
 import org.primefaces.component.api.ClientBehaviorRenderingMode;
 
 import org.primefaces.context.PrimeRequestContext;
-import org.primefaces.expression.SearchExpressionFacade;
 import org.primefaces.util.AjaxRequestBuilder;
 
 public class AjaxBehaviorRenderer extends ClientBehaviorRenderer {
@@ -65,9 +64,9 @@ public class AjaxBehaviorRenderer extends ClientBehaviorRenderer {
             // perf optimzation
             if (behaviorParameters instanceof ArrayList) {
                 for (int i = 0; i < behaviorParameters.size(); i++) {
-                    ClientBehaviorContext.Parameter behaviorParameter = 
+                    ClientBehaviorContext.Parameter behaviorParameter =
                             ((ArrayList<ClientBehaviorContext.Parameter>) behaviorParameters).get(i);
-                    if (behaviorParameter.getValue() != null && behaviorParameter.getValue() instanceof ClientBehaviorRenderingMode) {
+                    if (behaviorParameter.getValue() instanceof ClientBehaviorRenderingMode) {
                         renderingMode = (ClientBehaviorRenderingMode) behaviorParameter.getValue();
                         break;
                     }
@@ -75,7 +74,7 @@ public class AjaxBehaviorRenderer extends ClientBehaviorRenderer {
             }
             else {
                 for (ClientBehaviorContext.Parameter behaviorParameter : behaviorParameters) {
-                    if (behaviorParameter.getValue() != null && behaviorParameter.getValue() instanceof ClientBehaviorRenderingMode) {
+                    if (behaviorParameter.getValue() instanceof ClientBehaviorRenderingMode) {
                         renderingMode = (ClientBehaviorRenderingMode) behaviorParameter.getValue();
                         break;
                     }
@@ -94,7 +93,7 @@ public class AjaxBehaviorRenderer extends ClientBehaviorRenderer {
         String request = builder.init()
                 .source(source)
                 .event(behaviorContext.getEventName())
-                .form(SearchExpressionFacade.resolveClientId(behaviorContext.getFacesContext(), component, ajaxBehavior.getForm()))
+                .form(ajaxBehavior, component)
                 .process(component, process)
                 .update(component, ajaxBehavior.getUpdate())
                 .async(ajaxBehavior.isAsync())

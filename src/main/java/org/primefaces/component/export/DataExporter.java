@@ -18,7 +18,6 @@ package org.primefaces.component.export;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
@@ -34,8 +33,6 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.expression.SearchExpressionFacade;
 
 public class DataExporter implements ActionListener, StateHolder {
-
-    private static final Logger LOGGER = Logger.getLogger(DataExporter.class.getName());
 
     private ValueExpression target;
 
@@ -63,8 +60,8 @@ public class DataExporter implements ActionListener, StateHolder {
     }
 
     public DataExporter(ValueExpression target, ValueExpression type, ValueExpression fileName, ValueExpression pageOnly,
-            ValueExpression selectionOnly, ValueExpression encoding, MethodExpression preProcessor,
-            MethodExpression postProcessor, ValueExpression options, MethodExpression onTableRender) {
+                        ValueExpression selectionOnly, ValueExpression encoding, MethodExpression preProcessor,
+                        MethodExpression postProcessor, ValueExpression options, MethodExpression onTableRender) {
         this.target = target;
         this.type = type;
         this.fileName = fileName;
@@ -94,22 +91,22 @@ public class DataExporter implements ActionListener, StateHolder {
         boolean repeating = false;
         if (repeat != null) {
             repeating = repeat.isLiteralText()
-                    ? Boolean.valueOf(repeat.getValue(context.getELContext()).toString())
-                    : (Boolean) repeat.getValue(context.getELContext());
+                        ? Boolean.parseBoolean(repeat.getValue(context.getELContext()).toString())
+                        : (Boolean) repeat.getValue(context.getELContext());
         }
 
         boolean isPageOnly = false;
         if (pageOnly != null) {
             isPageOnly = pageOnly.isLiteralText()
-                    ? Boolean.valueOf(pageOnly.getValue(context.getELContext()).toString())
-                    : (Boolean) pageOnly.getValue(context.getELContext());
+                         ? Boolean.parseBoolean(pageOnly.getValue(context.getELContext()).toString())
+                         : (Boolean) pageOnly.getValue(context.getELContext());
         }
 
         boolean isSelectionOnly = false;
         if (selectionOnly != null) {
             isSelectionOnly = selectionOnly.isLiteralText()
-                    ? Boolean.valueOf(selectionOnly.getValue(context.getELContext()).toString())
-                    : (Boolean) selectionOnly.getValue(context.getELContext());
+                              ? Boolean.parseBoolean(selectionOnly.getValue(context.getELContext()).toString())
+                              : (Boolean) selectionOnly.getValue(context.getELContext());
         }
 
         ExporterOptions exporterOptions = null;
@@ -124,7 +121,7 @@ public class DataExporter implements ActionListener, StateHolder {
                 List components = SearchExpressionFacade.resolveComponents(context, event.getComponent(), tables);
 
                 if (components.size() > 1) {
-                    exporter.export(context, outputFileName, (List<DataTable>) components, isPageOnly, isSelectionOnly,
+                    exporter.export(context, outputFileName, components, isPageOnly, isSelectionOnly,
                             encodingType, preProcessor, postProcessor, exporterOptions, onTableRender);
                 }
                 else {
@@ -163,12 +160,12 @@ public class DataExporter implements ActionListener, StateHolder {
     }
 
     public void setRepeat(ValueExpression ve) {
-        this.repeat = ve;
+        repeat = ve;
     }
 
     @Override
     public void restoreState(FacesContext context, Object state) {
-        Object values[] = (Object[]) state;
+        Object[] values = (Object[]) state;
 
         target = (ValueExpression) values[0];
         type = (ValueExpression) values[1];
@@ -185,7 +182,7 @@ public class DataExporter implements ActionListener, StateHolder {
 
     @Override
     public Object saveState(FacesContext context) {
-        Object values[] = new Object[11];
+        Object[] values = new Object[11];
 
         values[0] = target;
         values[1] = type;
@@ -199,6 +196,6 @@ public class DataExporter implements ActionListener, StateHolder {
         values[9] = options;
         values[10] = onTableRender;
 
-        return ((Object[]) values);
+        return (values);
     }
 }

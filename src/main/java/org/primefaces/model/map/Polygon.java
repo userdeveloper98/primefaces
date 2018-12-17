@@ -20,6 +20,8 @@ import java.util.List;
 
 public class Polygon extends Overlay {
 
+    private static final long serialVersionUID = 1L;
+
     private List<LatLng> paths;
 
     private String strokeColor;
@@ -33,7 +35,7 @@ public class Polygon extends Overlay {
     private double fillOpacity = 1.0;
 
     public Polygon() {
-        paths = new ArrayList<LatLng>();
+        paths = new ArrayList<>();
     }
 
     public Polygon(List<LatLng> paths) {

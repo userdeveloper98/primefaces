@@ -15,12 +15,16 @@
  */
 package org.primefaces;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.primefaces.component.datatable.TableState;
+import org.primefaces.context.PrimeRequestContext;
+import org.primefaces.expression.ComponentNotFoundException;
+import org.primefaces.expression.SearchExpressionFacade;
+import org.primefaces.util.ComponentUtils;
+import org.primefaces.util.Constants;
+import org.primefaces.util.EscapeUtils;
+import org.primefaces.util.LangUtils;
+import org.primefaces.visit.ResetInputVisitCallback;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
@@ -28,27 +32,25 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.component.visit.VisitContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.PartialViewContext;
-import org.primefaces.component.datatable.TableState;
-import org.primefaces.context.PrimeRequestContext;
-import org.primefaces.expression.ComponentNotFoundException;
-import org.primefaces.expression.SearchExpressionFacade;
-import org.primefaces.util.ComponentUtils;
-import org.primefaces.util.Constants;
-import org.primefaces.util.LangUtils;
-import org.primefaces.visit.ResetInputVisitCallback;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PrimeFaces {
 
-    private static final Logger LOG = Logger.getLogger(PrimeFaces.class.getName());
-    
-    // TODO - there are 2 possible solutions
+    private static final Logger LOGGER = Logger.getLogger(PrimeFaces.class.getName());
+
+    // There are 2 possible solutions
     // 1) the current static solution + use Faces/RequestContext#getCurrentInstance each time
     // 2) make PrimeFaces requestScoped and receive Faces/RequestContext only once
     private static PrimeFaces instance = new PrimeFaces();
-    
+
     private final Dialog dialog;
     private final Ajax ajax;
-    
+
     /**
      * Protected constructor to allow CDI proxying - and also allow customizations, or setting a mock.
      */
@@ -64,33 +66,33 @@ public class PrimeFaces {
     public static void setCurrent(PrimeFaces primeFaces) {
         instance = primeFaces;
     }
-    
+
     protected FacesContext getFacesContext() {
         return FacesContext.getCurrentInstance();
     }
-    
+
     protected PrimeRequestContext getRequestContext() {
         return PrimeRequestContext.getCurrentInstance();
     }
-    
+
     /**
      * Shortcut for {@link PartialViewContext#isAjaxRequest()}.
-     * 
+     *
      * @return <code>true</code> if the current request is a AJAX request.
      */
     public boolean isAjaxRequest() {
         return getFacesContext().getPartialViewContext().isAjaxRequest();
     }
-    
+
     /**
      * Executes a JavaScript statement.
-     * 
+     *
      * @param statement the JavaScript statement.
      */
     public void executeScript(String statement) {
         getRequestContext().getScriptsToExecute().add(statement);
     }
-    
+
     /**
      * Scrolls to a component with the given clientId.
      *
@@ -99,7 +101,7 @@ public class PrimeFaces {
     public void scrollTo(String clientId) {
         executeScript("PrimeFaces.scrollTo('" + clientId + "');");
     }
-    
+
     /**
      * Resolves the search expression, starting from the viewroot, and focus the resolved component.
      *
@@ -108,7 +110,7 @@ public class PrimeFaces {
     public void focus(String expression) {
         focus(expression, FacesContext.getCurrentInstance().getViewRoot());
     }
-    
+
     /**
      * Resolves the search expression and focus the resolved component.
      *
@@ -127,7 +129,7 @@ public class PrimeFaces {
                 expression);
         executeScript("PrimeFaces.focus('" + clientId + "');");
     }
-    
+
     /**
      * Resolves the search expressions, starting from the viewroot and resets all found {@link UIInput} components.
      *
@@ -141,7 +143,7 @@ public class PrimeFaces {
         FacesContext facesContext = getFacesContext();
         VisitContext visitContext = VisitContext.createVisitContext(facesContext, null, ComponentUtils.VISIT_HINTS_SKIP_UNRENDERED);
 
-        
+
         UIViewRoot root = facesContext.getViewRoot();
         for (String expression : expressions) {
             List<UIComponent> components = SearchExpressionFacade.resolveComponents(facesContext, root, expression);
@@ -163,11 +165,18 @@ public class PrimeFaces {
 
         resetInputs(Arrays.asList(expressions));
     }
-    
+
+    /**
+     * Removes the multiViewState for all DataTables within the current session.
+     */
     public void clearTableStates() {
         getFacesContext().getExternalContext().getSessionMap().remove(Constants.TABLE_STATE);
     }
 
+    /**
+     * Removes the multiViewState for one specific DataTable within the current session.
+     * @param key Key of the DataTable. See {@link org.primefaces.component.datatable.DataTable#getTableState(boolean)} for the namebuild of this key.
+     */
     public void clearTableState(String key) {
         Map<String, Object> sessionMap = getFacesContext().getExternalContext().getSessionMap();
         Map<String, TableState> dtState = (Map) sessionMap.get(Constants.TABLE_STATE);
@@ -177,8 +186,27 @@ public class PrimeFaces {
     }
 
     /**
+     * Removes the multiViewState for all DataLists within the current session.
+     */
+    public void clearDataListStates() {
+        getFacesContext().getExternalContext().getSessionMap().remove(Constants.DATALIST_STATE);
+    }
+
+    /**
+     * Removes the multiViewState for one specific DataList within the current session.
+     * @param key Key of the DataList. See {@link org.primefaces.component.datalist.DataList#getDataListState(boolean)}} for the namebuild of this key.
+     */
+    public void clearDataListState(String key) {
+        Map<String, Object> sessionMap = getFacesContext().getExternalContext().getSessionMap();
+        Map<String, TableState> dtState = (Map) sessionMap.get(Constants.DATALIST_STATE);
+        if (dtState != null) {
+            dtState.remove(key);
+        }
+    }
+
+    /**
      * Returns the dialog helpers.
-     * 
+     *
      * @return the dialog helpers.
      */
     public Dialog dialog() {
@@ -224,7 +252,7 @@ public class PrimeFaces {
         public void closeDynamic(Object data) {
             FacesContext facesContext = getFacesContext();
             Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
-            String pfdlgcid = ComponentUtils.escapeEcmaScriptText(params.get(Constants.DIALOG_FRAMEWORK.CONVERSATION_PARAM));
+            String pfdlgcid = EscapeUtils.forJavaScript(params.get(Constants.DIALOG_FRAMEWORK.CONVERSATION_PARAM));
 
             if (data != null) {
                 Map<String, Object> session = facesContext.getExternalContext().getSessionMap();
@@ -233,26 +261,26 @@ public class PrimeFaces {
 
             executeScript("PrimeFaces.closeDialog({pfdlgcid:'" + pfdlgcid + "'});");
         }
-        
+
         /**
          * Displays a message in a dynamic dialog.
          *
          * @param message the {@link FacesMessage} to be displayed.
          */
         public void showMessageDynamic(FacesMessage message) {
-            String summary = ComponentUtils.escapeText(message.getSummary());
-            String detail = ComponentUtils.escapeText(message.getDetail());
+            String summary = EscapeUtils.forJavaScript(message.getSummary());
+            String detail = EscapeUtils.forJavaScript(message.getDetail());
 
             executeScript("PrimeFaces.showMessageInDialog({severity:\"" + message.getSeverity()
                     + "\",summary:\"" + summary
                     + "\",detail:\"" + detail + "\"});");
         }
     }
-    
-    public Ajax ajax() {        
+
+    public Ajax ajax() {
         return ajax;
     }
-    
+
     public class Ajax {
         /**
          * Add a parameter for ajax oncomplete client side callbacks. Value will be serialized to json.
@@ -264,7 +292,7 @@ public class PrimeFaces {
         public void addCallbackParam(String name, Object value) {
             getRequestContext().getCallbackParams().put(name, value);
         }
-        
+
         /**
          * Updates all components with the given expressions or clientIds.
          *
@@ -274,23 +302,23 @@ public class PrimeFaces {
             if (expressions == null || expressions.isEmpty()) {
                 return;
             }
-            
+
             FacesContext facesContext = getFacesContext();
-            
+
             for (String expression : expressions) {
-                
+
                 if (LangUtils.isValueBlank(expression)) {
                     continue;
                 }
 
                 try {
-                    String clientId = 
+                    String clientId =
                             SearchExpressionFacade.resolveClientId(facesContext, facesContext.getViewRoot(), expression);
-                    
+
                     facesContext.getPartialViewContext().getRenderIds().add(clientId);
                 }
                 catch (ComponentNotFoundException e) {
-                    LOG.log(Level.WARNING,
+                    LOGGER.log(Level.WARNING,
                             "PrimeFaces.current().ajax().update() called but component can't be resolved!"
                             + "Expression will just be added to the renderIds.", e);
 
@@ -298,7 +326,7 @@ public class PrimeFaces {
                 }
             }
         }
-        
+
         /**
          * Updates all components with the given expressions or clientIds.
          *

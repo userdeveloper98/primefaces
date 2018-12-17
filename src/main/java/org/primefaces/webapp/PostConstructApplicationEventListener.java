@@ -24,10 +24,11 @@ import javax.faces.event.SystemEvent;
 import javax.faces.event.SystemEventListener;
 
 import org.primefaces.config.PrimeEnvironment;
+import org.primefaces.config.StartupPrimeEnvironment;
 
 public class PostConstructApplicationEventListener implements SystemEventListener {
 
-    private final static Logger logger = Logger.getLogger(PostConstructApplicationEventListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PostConstructApplicationEventListener.class.getName());
 
     @Override
     public boolean isListenerForSource(Object source) {
@@ -37,14 +38,15 @@ public class PostConstructApplicationEventListener implements SystemEventListene
     @Override
     public void processEvent(SystemEvent event) throws AbortProcessingException {
         // temp manually instantiate as the ApplicationContext is not available yet
-        PrimeEnvironment environment = new PrimeEnvironment();
+        PrimeEnvironment environment = new StartupPrimeEnvironment();
 
-        logger.log(Level.INFO,
+        LOGGER.log(Level.INFO,
                 "Running on PrimeFaces {0}",
                 environment.getBuildVersion());
-        
+
         if (environment.isAtLeastJsf23()) {
             Jsf23Helper.addSearchKeywordResolvers();
         }
     }
+
 }

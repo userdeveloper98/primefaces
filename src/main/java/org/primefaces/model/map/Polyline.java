@@ -20,6 +20,8 @@ import java.util.List;
 
 public class Polyline extends Overlay {
 
+    private static final long serialVersionUID = 1L;
+
     private List<LatLng> paths;
 
     private String strokeColor;
@@ -27,11 +29,11 @@ public class Polyline extends Overlay {
     private double strokeOpacity = 1.0;
 
     private int strokeWeight = 1;
-    
+
     private String icons;
 
     public Polyline() {
-        paths = new ArrayList<LatLng>();
+        paths = new ArrayList<>();
     }
 
     public Polyline(List<LatLng> paths) {
@@ -74,7 +76,7 @@ public class Polyline extends Overlay {
     public void setStrokeWeight(int strokeWeight) {
         this.strokeWeight = strokeWeight;
     }
-    
+
     public String getIcons() {
         return icons;
     }

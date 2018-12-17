@@ -18,9 +18,12 @@ package org.primefaces.application.resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MoveScriptsToBottomState implements Serializable {
-    
+
+    private static final long serialVersionUID = 1L;
+
     private HashMap<String, ArrayList<String>> includes;
     private HashMap<String, ArrayList<String>> inlines;
     private int savedInlineTags;
@@ -30,7 +33,7 @@ public class MoveScriptsToBottomState implements Serializable {
         inlines = new HashMap<>(1);
         savedInlineTags = -1;
     }
-    
+
     public void addInclude(String type, StringBuilder src) {
         if (src.length() > 0) {
             ArrayList<String> includeList = includes.get(type);
@@ -41,7 +44,7 @@ public class MoveScriptsToBottomState implements Serializable {
             includeList.add(src.toString());
         }
     }
-    
+
     public void addInline(String type, StringBuilder content) {
         if (content.length() > 0) {
             ArrayList<String> inlineList = inlines.get(type);
@@ -55,11 +58,11 @@ public class MoveScriptsToBottomState implements Serializable {
         }
     }
 
-    public HashMap<String, ArrayList<String>> getIncludes() {
+    public Map<String, ArrayList<String>> getIncludes() {
         return includes;
     }
 
-    public HashMap<String, ArrayList<String>> getInlines() {
+    public Map<String, ArrayList<String>> getInlines() {
         return inlines;
     }
 

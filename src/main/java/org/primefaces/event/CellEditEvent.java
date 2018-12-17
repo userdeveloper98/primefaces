@@ -30,6 +30,8 @@ import org.primefaces.component.treetable.TreeTable;
 
 public class CellEditEvent extends AbstractAjaxBehaviorEvent {
 
+    private static final long serialVersionUID = 1L;
+
     private Object oldValue;
 
     private Object newValue;
@@ -100,7 +102,7 @@ public class CellEditEvent extends AbstractAjaxBehaviorEvent {
 
                 //multiple
                 if (inputFacet instanceof UIPanel) {
-                    List<Object> values = new ArrayList<Object>();
+                    List<Object> values = new ArrayList<>();
                     for (UIComponent kid : inputFacet.getChildren()) {
                         if (kid instanceof ValueHolder) {
                             values.add(((ValueHolder) kid).getValue());

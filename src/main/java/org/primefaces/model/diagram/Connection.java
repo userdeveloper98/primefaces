@@ -24,6 +24,8 @@ import org.primefaces.model.diagram.overlay.Overlay;
 
 public class Connection implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private EndPoint source;
 
     private EndPoint target;
@@ -35,7 +37,7 @@ public class Connection implements Serializable {
     private boolean detachable = true;
 
     public Connection() {
-        overlays = new ArrayList<Overlay>();
+        overlays = new ArrayList<>();
     }
 
     public Connection(EndPoint source, EndPoint target) {

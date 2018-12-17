@@ -21,9 +21,11 @@ import java.util.List;
 
 public class TerminalCommand implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String text;
     private List<TerminalCommand> arguments;
-    
+
     public TerminalCommand(String commandText) {
         this.text = commandText;
     }
@@ -35,11 +37,11 @@ public class TerminalCommand implements Serializable {
     public void setText(String text) {
         this.text = text;
     }
-    
+
     public List<TerminalCommand> getArguments() {
         return arguments;
     }
-    
+
     public void setArguments(List<TerminalCommand> arguments) {
         this.arguments = arguments;
     }
@@ -47,17 +49,17 @@ public class TerminalCommand implements Serializable {
     public boolean hasArguments() {
         return ((this.arguments == null) || !this.arguments.isEmpty());
     }
-    
+
     public TerminalCommand addArgument(String argumentText) {
         TerminalCommand argument = new TerminalCommand(argumentText);
-        
+
         if (this.arguments == null) {
-            this.arguments = new ArrayList<TerminalCommand>();
+            this.arguments = new ArrayList<>();
         }
-        
+
         this.arguments.add(argument);
-        
+
         return argument;
     }
-    
+
 }

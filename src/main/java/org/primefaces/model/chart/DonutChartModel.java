@@ -21,6 +21,8 @@ import java.util.Map;
 
 public class DonutChartModel extends ChartModel {
 
+    private static final long serialVersionUID = 1L;
+
     private List<Map<String, Number>> data;
     private int sliceMargin;
     private boolean fill = true;
@@ -33,7 +35,7 @@ public class DonutChartModel extends ChartModel {
     private String datatipEditor;
 
     public DonutChartModel() {
-        data = new ArrayList<Map<String, Number>>();
+        data = new ArrayList<>();
     }
 
     public DonutChartModel(List<Map<String, Number>> data) {

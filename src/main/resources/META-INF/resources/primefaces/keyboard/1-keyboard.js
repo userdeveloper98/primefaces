@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PrimeFaces Keyboard Widget
  */
  PrimeFaces.widget.Keyboard = PrimeFaces.widget.BaseWidget.extend({
@@ -6,6 +6,7 @@
     init: function(cfg) {
         this._super(cfg);
 
+        var $this = this;   
         if(this.cfg.layoutTemplate)
             this.cfg.layout = PrimeFaces.widget.KeyboardUtils.createLayoutFromTemplate(this.cfg.layoutTemplate);
         else
@@ -21,8 +22,8 @@
         PrimeFaces.skinInput(this.jq);
 
         //Hide overlay on resize
-        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id, null, function() {
-            $.keypad._hideKeypad();
+        PrimeFaces.utils.registerResizeHandler(this, 'resize.' + this.id + '_align', null, function() {
+            $this.jq.keypad('hide');
         });
     }
 

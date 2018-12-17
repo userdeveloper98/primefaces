@@ -14,12 +14,12 @@ if (!PrimeFaces.utils) {
          * After the AJAX update, we have now 2 overlays with the same id:
          * 1) below the root element
          * 2) the old, detached overlay, below the "appendTo"
-         * 
+         *
          * We now need to remove the detached overlay.
          */
         cleanupDynamicOverlay: function(widget, overlay, overlayId, appendTo) {
             if (widget.cfg.appendTo) {
-                var overlays = $("[id='" + overlayId + "']");                
+                var overlays = $("[id='" + overlayId + "']");
                 if (overlays.length > 1) {
                     appendTo.children("[id='" + overlayId + "']").remove();
                 }
@@ -155,7 +155,7 @@ if (!PrimeFaces.utils) {
                 $(document).off(hideNamespace);
             });
 
-            $(document).off(hideNamespace).on(hideNamespace, function (e) {
+            $(document).off(hideNamespace).on(hideNamespace, function(e) {
                 if (overlay.is(':hidden') || overlay.css('visibility') === 'hidden') {
                     return;
                 }
@@ -164,7 +164,7 @@ if (!PrimeFaces.utils) {
 
                 // do nothing when the element should be ignored
                 if (resolveIgnoredElementsCallback) {
-                    var elementsToIgnore = resolveIgnoredElementsCallback();
+                    var elementsToIgnore = resolveIgnoredElementsCallback(e);
                     if (elementsToIgnore) {
                         if (elementsToIgnore.is($eventTarget) || elementsToIgnore.has($eventTarget).length > 0) {
                             return;
@@ -172,12 +172,17 @@ if (!PrimeFaces.utils) {
                     }
                 }
 
+
+                // this checks were moved to the used components
+
                 // do nothing when the clicked element is a child of the overlay
+                /*
                 if (overlay.is($eventTarget) || overlay.has($eventTarget).length > 0) {
                     return;
                 }
+                */
 
-                // old check:
+                // OLD WAY: do nothing when the clicked element is a child of the overlay
                 /*
                 var offset = overlay.offset();
                 if (e.pageX < offset.left
@@ -188,7 +193,7 @@ if (!PrimeFaces.utils) {
                 }
                 */
 
-                hideCallback(e);
+                hideCallback(e, $eventTarget);
             });
         },
 
@@ -200,7 +205,7 @@ if (!PrimeFaces.utils) {
             });
 
             $(window).off(resizeNamespace).on(resizeNamespace, function(e) {
-                if (element && element.is(":hidden")) {
+                if (element && (element.is(":hidden") || element.css('visibility') === 'hidden')) {
                     return;
                 }
 
@@ -216,15 +221,16 @@ if (!PrimeFaces.utils) {
 
                 widget.addDestroyListener(function() {
                     var appendTo = PrimeFaces.utils.resolveDynamicOverlayContainer(widget);
-                    PrimeFaces.utils.removeDynamicOverlay(widget, overlay, overlayId, appendTo);
+                    // pass null as overlay - as every! overlay with this overlayId can be removed on destroying the whole widget
+                    PrimeFaces.utils.removeDynamicOverlay(widget, null, overlayId, appendTo);
                 });
-                
+
                 widget.addRefreshListener(function() {
                     var appendTo = PrimeFaces.utils.resolveDynamicOverlayContainer(widget);
                     PrimeFaces.utils.cleanupDynamicOverlay(widget, overlay, overlayId, appendTo);
-                });    
+                });
             }
-            
+
             return overlay;
         },
 

@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
-import java.math.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -77,6 +78,7 @@ import java.util.Map;
  * @author JSON.org
  * @version 2015-10-29
  */
+// CHECKSTYLE:OFF
 public class JSONArray implements Iterable<Object> {
 
     /**
@@ -153,9 +155,9 @@ public class JSONArray implements Iterable<Object> {
     public JSONArray(Collection<?> collection) {
         this.myArrayList = new ArrayList<Object>();
         if (collection != null) {
-        	for (Object o: collection){
-        		this.myArrayList.add(JSONObject.wrap(o));
-        	}
+            for (Object o: collection){
+                this.myArrayList.add(JSONObject.wrap(o));
+            }
         }
     }
 
@@ -247,7 +249,7 @@ public class JSONArray implements Iterable<Object> {
 
     /**
     * Get the enum value associated with an index.
-    * 
+    *
     * @param clazz
     *            The type of enum to retrieve.
     * @param index
@@ -556,7 +558,7 @@ public class JSONArray implements Iterable<Object> {
 
     /**
      * Get the enum value associated with a key.
-     * 
+     *
      * @param clazz
      *            The type of enum to retrieve.
      * @param index
@@ -569,7 +571,7 @@ public class JSONArray implements Iterable<Object> {
 
     /**
      * Get the enum value associated with a key.
-     * 
+     *
      * @param clazz
      *            The type of enum to retrieve.
      * @param index
@@ -597,13 +599,13 @@ public class JSONArray implements Iterable<Object> {
         } catch (NullPointerException e) {
             return defaultValue;
         }
-        
+
     }
 
 
     /**
-     * Get the optional BigInteger value associated with an index. The 
-     * defaultValue is returned if there is no value for the index, or if the 
+     * Get the optional BigInteger value associated with an index. The
+     * defaultValue is returned if there is no value for the index, or if the
      * value is not a number and cannot be converted to a number.
      *
      * @param index
@@ -621,8 +623,8 @@ public class JSONArray implements Iterable<Object> {
     }
 
     /**
-     * Get the optional BigDecimal value associated with an index. The 
-     * defaultValue is returned if there is no value for the index, or if the 
+     * Get the optional BigDecimal value associated with an index. The
+     * defaultValue is returned if there is no value for the index, or if the
      * value is not a number and cannot be converted to a number.
      *
      * @param index
@@ -1130,3 +1132,4 @@ public class JSONArray implements Iterable<Object> {
         }
     }
 }
+//CHECKSTYLE:ON

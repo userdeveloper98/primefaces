@@ -20,6 +20,8 @@ import java.util.List;
 
 public class MeterGaugeChartModel extends ChartModel {
 
+    private static final long serialVersionUID = 1L;
+
     private Number value;
     private List<Number> intervals;
     private List<Number> ticks;
@@ -33,7 +35,7 @@ public class MeterGaugeChartModel extends ChartModel {
     private int labelHeightAdjust = -25;
 
     public MeterGaugeChartModel() {
-        intervals = new ArrayList<Number>();
+        intervals = new ArrayList<>();
     }
 
     public MeterGaugeChartModel(Number value, List<Number> intervals) {

@@ -21,6 +21,8 @@ import java.util.List;
 
 public class DefaultMenuColumn implements MenuColumn, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String style;
     private String styleClass;
@@ -28,7 +30,7 @@ public class DefaultMenuColumn implements MenuColumn, Serializable {
     private boolean rendered = true;
 
     public DefaultMenuColumn() {
-        elements = new ArrayList<MenuElement>();
+        elements = new ArrayList<>();
     }
 
     @Override

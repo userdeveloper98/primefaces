@@ -26,9 +26,10 @@ import javax.faces.event.PhaseId;
 
 public class WrapperEvent extends FacesEvent {
 
+    private static final long serialVersionUID = 1L;
     private FacesEvent event = null;
     private String rowKey = null;
-    
+
     public WrapperEvent(UIComponent component, FacesEvent event, String rowKey) {
         super(component);
         this.event = event;
@@ -36,7 +37,7 @@ public class WrapperEvent extends FacesEvent {
     }
 
     public FacesEvent getFacesEvent() {
-        return (this.event);
+        return (event);
     }
 
     public String getRowKey() {
@@ -45,12 +46,12 @@ public class WrapperEvent extends FacesEvent {
 
     @Override
     public PhaseId getPhaseId() {
-        return (this.event.getPhaseId());
+        return (event.getPhaseId());
     }
 
     @Override
     public void setPhaseId(PhaseId phaseId) {
-        this.event.setPhaseId(phaseId);
+        event.setPhaseId(phaseId);
     }
 
     @Override

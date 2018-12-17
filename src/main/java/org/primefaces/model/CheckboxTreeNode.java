@@ -22,6 +22,8 @@ public class CheckboxTreeNode implements TreeNode, Serializable {
 
     public static final String DEFAULT_TYPE = "default";
 
+    private static final long serialVersionUID = 1L;
+
     private String type;
 
     private Object data;
@@ -265,7 +267,7 @@ public class CheckboxTreeNode implements TreeNode, Serializable {
         else if (!rowKey.equals(other.rowKey)) {
             return false;
         }
-        
+
         return true;
     }
 
